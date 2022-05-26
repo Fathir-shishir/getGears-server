@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const port = process.env.PORT || 5000
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // dbuser
 // user : get-gears
@@ -20,6 +20,18 @@ async function run() {
       await client.connect();
       const servicesCollection = client.db("get-gears").collection("products");
       const reviewsCollection = client.db("get-gears").collection("reviews");
+      app.get("/services",async(req,res)=>{
+          const query={};
+          const cursor = servicesCollection.find(query);
+          const services = await cursor.toArray()
+          res.send(services)
+      })
+      app.get("/services/:id",async(req,res)=>{
+          const id =req.params.id;
+          const query={_id:ObjectId(id)};
+          const services = await servicesCollection.findOne(query)
+          res.send(services)
+      })
       app.get("/services",async(req,res)=>{
           const query={};
           const cursor = servicesCollection.find(query);
