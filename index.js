@@ -20,6 +20,7 @@ async function run() {
       await client.connect();
       const servicesCollection = client.db("get-gears").collection("products");
       const reviewsCollection = client.db("get-gears").collection("reviews");
+      const orderDetailsCollection = client.db("get-gears").collection("orderDetails");
       app.get("/services",async(req,res)=>{
           const query={};
           const cursor = servicesCollection.find(query);
@@ -32,17 +33,22 @@ async function run() {
           const services = await servicesCollection.findOne(query)
           res.send(services)
       })
-      app.get("/services",async(req,res)=>{
-          const query={};
-          const cursor = servicesCollection.find(query);
-          const services = await cursor.toArray()
-          res.send(services)
-      })
+    //   app.get("/services",async(req,res)=>{
+    //       const query={};
+    //       const cursor = servicesCollection.find(query);
+    //       const services = await cursor.toArray()
+    //       res.send(services)
+    //   })
       app.get("/reviews",async(req,res)=>{
           const query={};
           const cursor = reviewsCollection.find(query);
           const reviews = await cursor.toArray()
           res.send(reviews)
+      })
+      app.post("/orderDetails",async(req,res)=>{
+          const orderDetails=req.body;
+          const result = await orderDetailsCollection.insertOne(orderDetails);
+          res.send(result)
       })
      
      
