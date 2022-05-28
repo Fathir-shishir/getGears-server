@@ -41,6 +41,11 @@ async function run() {
         const isAdmin = user.role === 'admin'
         res.send({admin:isAdmin})
       })
+      app.delete("/admin/:email",async(req,res)=>{
+        const email=req.params.email;
+        const user =await userCollection.deleteOne({email:email})
+        res.send(user)
+      })
       app.put("/user/:email",async(req,res)=>{
         const user=req.body;
         const email=req.params.email;
