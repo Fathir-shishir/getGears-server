@@ -103,6 +103,11 @@ async function run() {
           const result = await servicesCollection.insertOne(myProfile);
           res.send(result)
       })
+      app.post("/reviews",async(req,res)=>{
+          const myProfile=req.body;
+          const result = await reviewsCollection.insertOne(myProfile);
+          res.send(result)
+      })
       app.get("/orderDetails",async(req,res)=>{
         const email =req.query.email  
         const query={email : email };
