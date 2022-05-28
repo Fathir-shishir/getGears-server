@@ -21,12 +21,50 @@ async function run() {
       const servicesCollection = client.db("get-gears").collection("products");
       const reviewsCollection = client.db("get-gears").collection("reviews");
       const orderDetailsCollection = client.db("get-gears").collection("orderDetails");
+      const myProfileCollection = client.db("get-gears").collection("myprofile");
+      const userCollection = client.db("get-gears").collection("users");
       app.get("/services",async(req,res)=>{
           const query={};
           const cursor = servicesCollection.find(query);
           const services = await cursor.toArray()
           res.send(services)
       })
+      app.get("/user",async(req,res)=>{
+          const query={};
+          const cursor = userCollection.find(query);
+          const users = await cursor.toArray()
+          res.send(users)
+      })
+      app.get("/admin/:email",async(req,res)=>{
+        const email=req.params.email;
+        const user =await userCollection.findOne({email:email})
+        const isAdmin = user.role === 'admin'
+        res.send({admin:isAdmin})
+      })
+      app.put("/user/:email",async(req,res)=>{
+        const user=req.body;
+        const email=req.params.email;
+        console.log(email)
+        const filter={email:email}
+        const options={upsert:true};
+        const updateDoc = {
+          $set:user,
+        };
+      const result=await userCollection.updateOne(filter,updateDoc,options);
+       res.send(result)
+      });
+      app.put("/user/admin/:email",async(req,res)=>{
+       
+        const email=req.params.email;
+       
+        const filter={email:email}
+       
+        const updateDoc = {
+          $set:{role:'admin'},
+        };
+      const result=await userCollection.updateOne(filter,updateDoc);
+       res.send(result)
+      });
       app.get("/services/:id",async(req,res)=>{
           const id =req.params.id;
           const query={_id:ObjectId(id)};
@@ -48,6 +86,11 @@ async function run() {
       app.post("/orderDetails",async(req,res)=>{
           const orderDetails=req.body;
           const result = await orderDetailsCollection.insertOne(orderDetails);
+          res.send(result)
+      })
+      app.post("/myprofile",async(req,res)=>{
+          const myProfile=req.body;
+          const result = await myProfileCollection.insertOne(myProfile);
           res.send(result)
       })
       app.get("/orderDetails",async(req,res)=>{
