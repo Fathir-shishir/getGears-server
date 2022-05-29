@@ -126,7 +126,7 @@ async function run() {
   run()
 
 app.get('/', (req, res) => {
-  res.send(' get gears server')
+  res.send(' hello from gears server')
 })
 
 app.listen(port, () => {
